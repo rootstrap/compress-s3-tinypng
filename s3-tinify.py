@@ -65,23 +65,32 @@ if len(source_list) == 0:
 else:
     print("Found " + str(len(source_list)) + " images to process.")
     # create temp directory
-    #temp_dir = os.makedirs(_("temp"))
+    if not os.path.exists("_temp"):
+        temp_dir = os.makedirs(("_temp"))
 
 #start image processing
 success_count = 0
 
-def store_image(img, img_name, bucket, region):
+def store_image(img, img_name):
     try:
-        img.store(
-            service = "s3",
-            aws_access_key_id = AWS_ACCESS_KEY_ID,
-            aws_secret_access_key = AWS_SECRET_ACCESS_KEY,
-            region = region,
-            path = bucket + img_name
+        temp_name = os.path.basename(img_name)
+        temp_save_location = os.path.join("_temp", temp_name)
+        temp_img = img.to_file(temp_save_location)
+
+        with open(temp_save_location, 'rb') as source:
+            img_data = source.read()
+
+        # upload to S3, overwrite old file
+        save_img = s3.put_object(
+            Body = img_data,
+            Bucket = AWS_BUCKET,
+            Key = image,
+            ContentType = "image/jpeg"
         )
-        print(img_name, "has been saved to your S3 bucket!")
+
+        print(img_name, "has been saved to S3 bucket", AWS_BUCKET)
     except:
-        print(img_name, "could not be saved to S3!")
+        print("***", img_name, "could not be saved to S3! ***")
 
 
 def write_metadata(img_key, bucket):
@@ -104,7 +113,7 @@ for image in source_list:
         print("Processing", image)
         orig = tinify.from_url("https://" + str(AWS_BUCKET) + ".s3.amazonaws.com/" + image) # TODO .resize()
         print(image, "has been successfully compressed.")
-        store_image(orig, image, AWS_BUCKET, AWS_REGION)
+        store_image(orig, str(image))
         #write_metadata(img, AWS_BUCKET)
         success_count += 1
     except:
@@ -112,4 +121,8 @@ for image in source_list:
         pass
 
 print(success_count, "images have been processed and saved to S3.")
+
+if success_count > 0:
+    os.rmdir("_temp")
+# TODO: remove temp dir
 sys.exit()
