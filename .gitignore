@@ -1,3 +1,7 @@
+__PyCache__
+creds.py
+.DS_Store
+/*/.DS_Store
 s3-lambda-thumbnail.py
 .Python
 [Bb]in
