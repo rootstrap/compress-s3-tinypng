@@ -1,40 +1,53 @@
 #!/usr/bin/env python3
 
-# TODO export envvar
-import boto3, tinify, argparse, os
-# change this to your tinypng api key
-tinify.key ="81VudJUdn_9z3Q25MGlOuSWn7s2gDIB-"
+import boto3, tinify, os
+from os.path import expanduser
 
-# input arguments
-input = argparse.ArgumentParser()
-input.add_argument("-d", "--directory", type=str, help="\
-        Specify the directory you want to save the images in, if not the current one.", required=False)
-input.add_argument("-s", "--scale", type=int, help="\
-        Scale proportionally to the specified width/height", required=False)
-input.add_argument("file", help="The file/s you want to compress, separated by spaces.\
-        Wildcards accepted.", nargs="+")
-arguments = input.parse_args()
+# check for ~/.aws/config
+print("Attempting to find ~/.aws/credentials")
 
-if arguments.directory != None:
-    save_dir = arguments.directory
-else:
-    save_dir = "./"
+AWS_ACCESS_KEY_ID = None
+AWS_SECRET_ACCESS_KEY = None
 
-if arguments.scale != None:
-    scale_size = arguments.scale
-else:
-    scale_size = None
-# file type checking
+try:
+    user_path = os.path.expanduser("~")
+    config_file = os.path.join(user_path, ".aws/credentials")
+    open(config_file)
+    print("AWS configuration file found!")
+except:
+    print("No AWS configuration file, prompting manual credential entry...")
+    AWS_ACCESS_KEY_ID = input("Enter your AWS access key ID: ")
+    AWS_SECRET_ACCESS_KEY = input("Enter your AWS secret access key: ")
+
+
+
+#TINIFY_KEY = input("Enter your tinify API key: ")
+AWS_BUCKET = input("Enter the bucket name you want to download from & save to: ")
+
+#tinify.key = TINIFY_KEY
+
+#construct bucket url
+#S3_URL = 'https://%s.s3.amazonaws.com' % AWS_BUCKET
+
+# begin interface with s3
+s3 = boto3.client('s3')
+# get bucket
+for key in s3.list_objects(Bucket=AWS_BUCKET)['Contents']:
+        print(key['Key'])
+
+#tinify.from_url()
+
+#save to s3
 '''
-for file in arguments.file:
-    ext = os.path.splitext(file)[1][1:].strip().lower()
-    print(ext)  
-    if ext != "jpg" or ext != "jpeg" or ext != "png":
-        print(file + " is not a JPG or PNG. It has been removed.")
-        arguments.file.remove(file)
-'''
-if len(arguments.file) == 0:
-    raise ValueError("There are no images to process!")
+IMAGE_VAR_HERE.store(
+    service="s3",
+    aws_access_key_id="AKIAIOSFODNN7EXAMPLE",
+    aws_secret_access_key="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    region="us-west-1",
+    path="example-bucket/my-images/optimized.jpg"
+)
+
+# handle errors
 
 for file in arguments.file:
     orig = tinify.from_file(file)
@@ -48,5 +61,5 @@ for file in arguments.file:
     else:
         orig.to_file(save_dir + file)
         print(file + " has been compressed.")
-
+'''
 
