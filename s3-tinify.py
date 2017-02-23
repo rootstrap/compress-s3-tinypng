@@ -6,9 +6,7 @@ from os.path import expanduser
 # check for ~/.aws/config
 print("Attempting to find ~/.aws/credentials")
 
-AWS_ACCESS_KEY_ID = None
-AWS_SECRET_ACCESS_KEY = None
-
+'''
 try:
     user_path = os.path.expanduser("~")
     config_file = os.path.join(user_path, ".aws/credentials")
@@ -18,12 +16,12 @@ except:
     print("No AWS configuration file, prompting manual credential entry...")
     AWS_ACCESS_KEY_ID = input("Enter your AWS access key ID: ")
     AWS_SECRET_ACCESS_KEY = input("Enter your AWS secret access key: ")
-
+'''
 
 
 #TINIFY_KEY = input("Enter your tinify API key: ")
 AWS_BUCKET = input("Enter the bucket name you want to download from & save to: ")
-
+DIRECTORY = input("Enter the directory you want to act on inside the bucket: ")
 #tinify.key = TINIFY_KEY
 
 #construct bucket url
