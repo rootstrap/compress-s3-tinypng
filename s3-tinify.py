@@ -111,10 +111,10 @@ def write_metadata(img_key, bucket):
 for image in source_list:
     try:
         print("Processing", image)
-        orig = tinify.from_url("https://" + str(AWS_BUCKET) + ".s3.amazonaws.com/" + image) # TODO .resize()
+        orig = tinify.from_url("https://" + str(AWS_BUCKET) + ".s3.amazonaws.com/" + image).resize(mode="scale", width="500")
         print(image, "has been successfully compressed.")
         store_image(orig, str(image))
-        #write_metadata(img, AWS_BUCKET)
+        write_metadata(img, AWS_BUCKET)
         success_count += 1
     except:
         print("***", image, "could not be processed! ***")
