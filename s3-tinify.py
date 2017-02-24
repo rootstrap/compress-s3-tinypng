@@ -14,7 +14,6 @@ try:
     AWS_SECRET_ACCESS_KEY = creds.AWS_SECRET_ACCESS_KEY
     TINIFY_KEY = creds.TINIFY_KEY
     AWS_BUCKET = creds.AWS_BUCKET
-    AWS_REGION = creds.AWS_REGION
 
 except:
     print("No credential file, prompting manual credential entry...")
@@ -22,7 +21,6 @@ except:
     AWS_SECRET_ACCESS_KEY = input("Enter your AWS secret access key: ")
     TINIFY_KEY = input("Enter your Tinify API key: ")
     AWS_BUCKET = input("Enter the name of the AWS bucket you want to access: ")
-    AWS_REGION = input("Enter the region of your AWS bucket: ")
 
 # TINIFY CONFIG
 tinify.key = TINIFY_KEY
