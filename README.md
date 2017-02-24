@@ -1,5 +1,5 @@
 # s3-tinify
-*Compress images in an S3 bucket using the TinyPNG API, and rewrite images with compressed versions
+*Compress images in an S3 bucket using the TinyPNG API, and rewrite images with compressed versions*
 
 Using the [Tinify](https://github.com/tinify/tinify-python) API from TinyPNG, we can achieve huge space reductions (8MB image => 24kb after resizing from 36 megapixels > 400px for thumbnail) in order to serve images for production usage. This package provides a wrapper around the Tinify API, and uses it to automatically compress images stored in your S3 bucket. The package then overwrites those images, assuming that you only require the uncompressed versions.
 
