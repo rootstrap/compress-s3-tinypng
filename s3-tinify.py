@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-import boto3, tinify, os, sys
+import boto3, tinify, os, sys, time
 import multiprocessing
+from multiprocessing import Process, Queue
 import creds
 
 try:
@@ -63,11 +64,9 @@ def make_temp_directory():
         if not os.path.exists("_temp"):
             temp_dir = os.makedirs(("_temp"))
 
-#start image processing
-success_count = 0
-
 def compress_save_image(image):
     print("Processing", image)
+    start = time.time()
     img_name = str(image)
     temp_name = os.path.basename(img_name)
     temp_save_location = os.path.join("_temp", temp_name)
@@ -110,13 +109,28 @@ def compress_save_image(image):
         }
     )
     print(image, "has been marked as compressed!")
-    success_count += 1
-    os.rmdir("_temp")
+    end = time.time() - start
+    print("This took", end, "seconds")
+
+
+def read_image_queue(queue):
+    while True:
+        img = queue.get()
+        compress_save_image(img)
+        if img == "BREAK":
+            break
+
+def write_image_queue(image, queue):
+    queue.put(source_list[image])
+    if image == "BREAK":
+        queue.put("BREAK")
 
 
 if __name__ == '__main__':
+    # TODO build queue/process workers
     get_s3_objects()
     make_temp_directory()
+
     jobs = []
     for i in range(len(source_list)):
         proc = multiprocessing.Process(
@@ -125,3 +139,5 @@ if __name__ == '__main__':
         )
         jobs.append(proc)
         proc.start()
+    if len(jobs) == 0:
+        os.rmdir("_temp")
