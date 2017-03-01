@@ -26,13 +26,14 @@ Using the [Tinify](https://github.com/tinify/tinify-python) API from TinyPNG, we
 	AWS_SECRET_ACCESS_KEY = 'YOUR_AWS_SECRET_HERE'
 	TINIFY_KEY = "YOUR_TINIFY_API_KEY_HERE"
 	AWS_BUCKET = "YOUR_BUCKET_NAME"
+	RESIZE_WIDTH = width you want your images to resize to (int)
 	```
 
 	- `Creds.py` is ignored by Git.
 
 	- On AWS, make sure the user you provide credentials for has full read/write access to the bucket.
 
-	- Boto3 (the AWS python SDK) will [look for credentials](http://boto3.readthedocs.io/en/latest/guide/configuration.html) on its own, but Creds.py provides a layer of redundancy (WHICH I MAY FIX LATER DEPENDING ON NEED.) The Tinify API requires a key to be passed on it regardless, and hardcoding it is not a good idea.
+	- Boto3 (the AWS python SDK) will [look for credentials](http://boto3.readthedocs.io/en/latest/guide/configuration.html) on its own, but Creds.py provides a layer of redundancy. If you don't have a creds.py, the script will prompt you for input and create one for you. 
 
 	- The Tinify API has a free tier of 500 images a month. If you go past that, Tinify will throw an error and it will halt the program.
 
