@@ -3,7 +3,6 @@
 import boto3, tinify, os, sys, time
 import multiprocessing
 from multiprocessing import Process, Queue
-import creds
 
 try:
     script_dir = os.path.dirname(__file__)
@@ -11,6 +10,7 @@ try:
     print("Looking for credential file:", str(config_file))
     open(config_file)
     print("Credential file found!")
+    import creds
     AWS_ACCESS_KEY_ID = creds.AWS_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY = creds.AWS_SECRET_ACCESS_KEY
     TINIFY_KEY = creds.TINIFY_KEY
@@ -18,10 +18,22 @@ try:
 
 except:
     print("No credential file, prompting manual credential entry...")
-    AWS_ACCESS_KEY_ID = input("Enter your AWS access key ID: ")
-    AWS_SECRET_ACCESS_KEY = input("Enter your AWS secret access key: ")
-    TINIFY_KEY = input("Enter your Tinify API key: ")
-    AWS_BUCKET = input("Enter the name of the AWS bucket you want to access: ")
+    AWS_ACCESS_KEY_ID = raw_input("Enter your AWS access key ID: ")
+    AWS_SECRET_ACCESS_KEY = raw_input("Enter your AWS secret access key: ")
+    TINIFY_KEY = raw_input("Enter your Tinify API key: ")
+    AWS_BUCKET = raw_input("Enter the name of the AWS bucket you want to access: ")
+    RESIZE_WIDTH = int(input("Enter the width you want to resize your images to (leave blank to keep original size): "))
+    creds = [AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, TINIFY_KEY, AWS_BUCKET, RESIZE_WIDTH]
+    new_cred_file = os.path.join(os.path.dirname(__file__), "creds.py")
+
+    with open(new_cred_file, "w") as output_creds:
+        rw = "RESIZE_WIDTH = %d" % RESIZE_WIDTH
+        output_creds.write("AWS_ACCESS_KEY_ID = " + str(AWS_ACCESS_KEY_ID) + "\n")
+        output_creds.write("AWS_SECRET_ACCESS_KEY = " + str(AWS_SECRET_ACCESS_KEY) + "\n")
+        output_creds.write("TINIFY_KEY = " + str(TINIFY_KEY) + "\n")
+        output_creds.write("AWS_BUCKET = " + str(AWS_BUCKET) + "\n")
+        output_creds.write(rw)
+        print("New creds.py written!")
 
 # TINIFY CONFIG
 tinify.key = TINIFY_KEY
@@ -72,11 +84,14 @@ def compress_save_image(image):
     temp_save_location = os.path.join("_temp", temp_name)
         # saving
     orig = tinify.from_url("https://" + str(AWS_BUCKET) + ".s3.amazonaws.com/" + image)
-    resized = orig.resize(
-        mode="scale", 
-        width=500
-    )
-    final = resized.to_file(temp_save_location)
+    if RESIZE_WIDTH != None:
+        resized = orig.resize(
+            mode="scale", 
+            width=RESIZE_WIDTH
+        )
+        final = resized.to_file(temp_save_location)
+    else:
+        final = orig.to_file(temp_save_location)
     # TODO refactor and remove redundant try/catch blocks
     if ".jpg" in temp_name or ".jpeg" in temp_name:
         content_type = "image/jpeg"
