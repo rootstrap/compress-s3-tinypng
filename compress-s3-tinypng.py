@@ -16,8 +16,7 @@ try:
     AWS_SECRET_ACCESS_KEY = creds.AWS_SECRET_ACCESS_KEY
     TINIFY_KEY = creds.TINIFY_KEY
     AWS_BUCKET = creds.AWS_BUCKET
-    RESIZE_WIDTH = int(creds.RESIZE_WIDTH)
-
+    
 except:
     # if we don't have a credential file, create one
     print("No credential file, prompting manual credential entry...")
@@ -25,12 +24,10 @@ except:
     AWS_SECRET_ACCESS_KEY = raw_input("Enter your AWS secret access key: ")
     TINIFY_KEY = raw_input("Enter your Tinify API key: ")
     AWS_BUCKET = raw_input("Enter the name of the AWS bucket you want to access: ")
-    RESIZE_WIDTH = int(input("Enter the width you want to resize your images to (leave blank to keep original size): "))
     new_cred_file = os.path.join(os.path.dirname(__file__), "creds.py")
 
     with open(new_cred_file, "w") as output_creds:
         # write our credential file
-        rw = "RESIZE_WIDTH = %d" % RESIZE_WIDTH
         output_creds.write("AWS_ACCESS_KEY_ID = " + str(AWS_ACCESS_KEY_ID) + "\n")
         output_creds.write("AWS_SECRET_ACCESS_KEY = " + str(AWS_SECRET_ACCESS_KEY) + "\n")
         output_creds.write("TINIFY_KEY = " + str(TINIFY_KEY) + "\n")
@@ -88,14 +85,8 @@ def compress_save_image(image):
     temp_save_location = os.path.join("_temp", temp_name)
         # saving
     orig = tinify.from_url("https://" + str(AWS_BUCKET) + ".s3.amazonaws.com/" + image)
-    if RESIZE_WIDTH != None:
-        resized = orig.resize(
-            mode="scale", 
-            width=RESIZE_WIDTH
-        )
-        final = resized.to_file(temp_save_location)
-    else:
-        final = orig.to_file(temp_save_location)
+    final = orig.to_file(temp_save_location)
+        
     # TODO refactor and remove redundant try/catch blocks
     if ".jpg" in temp_name or ".jpeg" in temp_name:
         content_type = "image/jpeg"
