@@ -7,6 +7,8 @@ To use this, we have to make sure that the bucket has the permissions: GetObject
 
 It overwrites the existing versions. 
 
+LIMITS: TinyPNG API supports up to 500 conversions per month. A paid plan can be used after that number. 
+
 Using the [Tinify](https://github.com/tinify/tinify-python) API from TinyPNG, we can achieve huge space reductions (8MB image => 24kb after resizing from 36 megapixels > 400px for thumbnail) in order to serve images for production usage. This package provides a wrapper around the Tinify API, and uses it to automatically compress images stored in your S3 bucket. The package then overwrites those images, assuming that you only require the uncompressed versions.
 
 ## Usage
@@ -46,3 +48,7 @@ Using the [Tinify](https://github.com/tinify/tinify-python) API from TinyPNG, we
 ## License
 
 MIT
+
+## Credits
+rs-s3-Tinypng is maintained by [Rootstrap](http://www.rootstrap.com) 
+[<img src="https://s3-us-west-1.amazonaws.com/rootstrap.com/img/rs.png" width="100"/>](http://www.rootstrap.com)
