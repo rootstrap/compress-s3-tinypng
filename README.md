@@ -1,4 +1,4 @@
-# s3-tinify
+# compress-s3-tinypng
 *Compress images in an S3 bucket using the TinyPNG API, and rewrite images with compressed versions*
 
 This is a modified version of [s3-tinify][https://github.com/sc1f/s3-tinify].
@@ -50,5 +50,5 @@ Using the [Tinify](https://github.com/tinify/tinify-python) API from TinyPNG, we
 MIT
 
 ## Credits
-rs-s3-Tinypng is maintained by [Rootstrap](http://www.rootstrap.com) 
+compress-s3-tinypng is maintained by [Rootstrap](http://www.rootstrap.com) 
 [<img src="https://s3-us-west-1.amazonaws.com/rootstrap.com/img/rs.png" width="100"/>](http://www.rootstrap.com)
